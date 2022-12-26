@@ -1,7 +1,7 @@
 from recipes.models import Tag, Recipe, Ingredient, IngredientRecipe
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
-
+from django.shortcuts import get_object_or_404
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,10 +9,12 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug',)
         
           
-# class IngredientSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Ingredient
-#         fields = ('id', 'name', 'measurement_unit',)
+class IngredientSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit',)
     
         
 class IngredientRecipeSerializer(serializers.ModelSerializer):
@@ -49,7 +51,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         many=True)
     ingredients = IngredientRecipeSerializer(
         many=True,
-        source='ingredientrecipe')
+        source='ingredientrecipe_set')
+    # ingredients = IngredientSerializer(
+    #     many=True,
+    #     )
+    
     class Meta:
         model = Recipe
         fields = (
@@ -58,3 +64,31 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'text', 'cooking_time'
         )
         
+    def create(self, validated_data):
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredientrecipe_set')
+        request = self.context.get('request')
+        recipe = Recipe.objects.create(author=request.user, **validated_data)
+        recipe.tags.set(tags)
+        for ingredient in ingredients:
+            ingredient_id = ingredient.popitem(last=False)[1]['id']
+            ingredient_amount = ingredient.popitem(last=False)[1]
+            ing_to_add = get_object_or_404(Ingredient, pk=ingredient_id)
+            if ing_to_add:
+                IngredientRecipe.objects.create(ingredient=ing_to_add, recipe=recipe, amount=ingredient_amount)
+        return recipe
+    
+    
+    def update(self, instance, validated_data):
+        instance.tags.clear()
+        IngredientRecipe.objects.filter(recipe=instance).delete()
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredientrecipe_set')
+        instance.tags.set(tags)
+        for ingredient in ingredients:
+            ingredient_id = ingredient.popitem(last=False)[1]['id']
+            ingredient_amount = ingredient.popitem(last=False)[1]
+            ingredient_to_add = get_object_or_404(Ingredient, pk=ingredient_id)
+            if ingredient_to_add:
+                IngredientRecipe.objects.create(ingredient=ingredient_to_add, recipe=instance, amount=ingredient_amount)
+        return super().update(instance, validated_data)

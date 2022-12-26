@@ -88,5 +88,5 @@ class IngredientRecipe(models.Model):
         null=True)
     amount = models.IntegerField()
 
-    def __str__(self):
-        return f'{self.ingredient}{self.recipe}'
+    # def __str__(self):
+    #     return f'{self.ingredient}{self.recipe}'
