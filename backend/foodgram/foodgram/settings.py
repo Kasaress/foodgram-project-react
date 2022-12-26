@@ -18,7 +18,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
     'users',
+    'recipes',
 ]
 
 MIDDLEWARE = [
@@ -76,14 +79,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5
+}
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserCreateSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
+    },
+    # 'PERMISSIONS': {
+    #     'user': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    #     'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    # }
 }
 
 LANGUAGE_CODE = 'ru-ru'
@@ -98,4 +114,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-DUPLICATE_USERNAME_MESSAGE = 'Пользователь с таким username уже зарегистрирован, но указан неверный email.'
+DUPLICATE_USERNAME_MESSAGE = 'Пользователь с таким username уже зарегистрирован'
+NAME_SLUG_LENGTH = 200
+TAG_SLUG_PATTERN = r'^[-a-zA-Z0-9_]+$'
+TAG_SLUG_ERROR_MESSAGE = f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'
