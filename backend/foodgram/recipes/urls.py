@@ -5,8 +5,8 @@ from .views import TagViewSet, RecipeViewSet
 app_name = 'recipes'
 
 router_v1 = routers.DefaultRouter()
-router_v1.register('tags', TagViewSet)
-router_v1.register('recipes', RecipeViewSet)
+router_v1.register('tags', TagViewSet, basename='tags')
+router_v1.register('recipes', RecipeViewSet, basename='recipes')
 
 
 urlpatterns = [

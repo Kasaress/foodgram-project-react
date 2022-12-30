@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from . import validators
 from django.contrib.auth import get_user_model
+from django.db.models import UniqueConstraint
 
 User = get_user_model()
 
@@ -36,7 +37,10 @@ class Recipe(models.Model):
         verbose_name='Автор'
     )
     name = models.CharField(max_length=settings.NAME_SLUG_LENGTH )
-    image = models.TextField()
+    image = models.ImageField(
+        upload_to='recipes/images/',
+        verbose_name='Картинка'
+    )
     text = models.TextField()
     cooking_time = models.IntegerField()
     tags = models.ManyToManyField(
@@ -88,5 +92,61 @@ class IngredientRecipe(models.Model):
         null=True)
     amount = models.IntegerField()
 
-    # def __str__(self):
-    #     return f'{self.ingredient}{self.recipe}'
+    def __str__(self):
+        return f'{self.ingredient}{self.recipe}'
+    
+    
+    
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorite'
+        )
+    recipe = models.ForeignKey(
+        Recipe, 
+        models.CASCADE,
+        related_name='favorite'
+        )
+
+    def __str__(self):
+        return f'У пользователя {self.user} в избранном {self.recipe}'
+    
+    
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='shopping_card'
+        )
+    recipe = models.ForeignKey(
+        Recipe, 
+        models.CASCADE,
+        related_name='shopping_card'
+        )
+
+    def __str__(self):
+        return f'У пользователя {self.user} в списке покупок {self.recipe}'
+    
+    
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='user',
+        verbose_name='Подписчик')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='author',
+        verbose_name='Автор')
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_follow'
+            ),
+        ]
+        verbose_name_plural = 'Подписки'
+        verbose_name = 'Подписка'
