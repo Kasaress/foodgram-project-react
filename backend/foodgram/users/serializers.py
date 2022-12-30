@@ -112,11 +112,6 @@ class SubscriptionsSerializer(CustomUserSerializer):
         
 
     def get_recipes(self, obj):
-        # limit = self.context.get('request').query_params.get('recipes_limit')
-        # if limit:
-        #     queryset = Recipe.objects.filter(
-        #         author=obj).order_by('-id')[:int(limit)]
-        # else:
         queryset = Recipe.objects.filter(author=obj.author.id)
         return ShortRecipeSerializer(queryset, many=True).data
 

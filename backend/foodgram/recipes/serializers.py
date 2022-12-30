@@ -126,3 +126,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 'Рецепт уже в избранном'
             )
         return data
+    
+    
+class IngredientsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit')

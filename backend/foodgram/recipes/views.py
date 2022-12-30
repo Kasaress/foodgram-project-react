@@ -1,7 +1,7 @@
 
 from rest_framework import viewsets
-from recipes.models import Tag, Recipe, ShoppingCart, IngredientRecipe, Favorite
-from recipes.serializers import TagSerializer, RecipeReadSerializer, RecipeCreateSerializer, ShoppingCartSerializer, FavoriteSerializer
+from recipes.models import Tag, Recipe, ShoppingCart, IngredientRecipe, Favorite, Ingredient
+from recipes.serializers import TagSerializer, RecipeReadSerializer, RecipeCreateSerializer, ShoppingCartSerializer, FavoriteSerializer, IngredientsSerializer
 from rest_framework.decorators import action
 from django.db.models import Sum
 from django.http.response import HttpResponse
@@ -94,3 +94,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     
+class IngredientsViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientsSerializer
