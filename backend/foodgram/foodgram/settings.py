@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'djoser',
     'users',
     'recipes',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -85,8 +86,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5
+    'DEFAULT_PAGINATION_CLASS': 'recipes.pagination.CustomPageNumberPagination',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 DJOSER = {
     'LOGIN_FIELD': 'email',
@@ -96,12 +97,8 @@ DJOSER = {
         'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.CustomUserSerializer',
     },
-    # 'PERMISSIONS': {
-    #     'user': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
-    #     'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
-    # }
 }
-
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'

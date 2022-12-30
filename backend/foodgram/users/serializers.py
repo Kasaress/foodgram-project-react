@@ -18,7 +18,7 @@ class UserCreateSerializer(UserCreateSerializer):
             'email', 'id', 'username', 'first_name',
             'last_name', 'password')
         
-    def create(self, validated_data): # переопределение для хранения хэша пароля
+    def create(self, validated_data):
         password = validated_data.pop('password')
         user = User(
             **validated_data

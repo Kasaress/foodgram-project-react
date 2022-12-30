@@ -15,6 +15,7 @@ User = get_user_model()
 
 class UserViewSet(UserViewSet):
     pagination_class = PageNumberPagination
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     def get_queryset(self):
         return User.objects.all()
 
