@@ -84,3 +84,46 @@ class SubscribeSerializer(CustomUserSerializer):
             )
         return data
 
+
+class SubscriptionsSerializer(CustomUserSerializer):
+    recipes = serializers.SerializerMethodField(read_only=True)
+    recipes_count = serializers.SerializerMethodField(read_only=True)
+    id = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'recipes',
+            'recipes_count'
+        )
+        read_only_fields = (
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'recipes',
+            'recipes_count'
+        )
+        
+
+    def get_recipes(self, obj):
+        # limit = self.context.get('request').query_params.get('recipes_limit')
+        # if limit:
+        #     queryset = Recipe.objects.filter(
+        #         author=obj).order_by('-id')[:int(limit)]
+        # else:
+        queryset = Recipe.objects.filter(author=obj.author.id)
+        return ShortRecipeSerializer(queryset, many=True).data
+
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj.author.id).count()
+    
+    
+    def get_id(self, obj):
+        return obj.author.id

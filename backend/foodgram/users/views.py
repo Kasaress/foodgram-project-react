@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from recipes.models import Follow
 from rest_framework.response import Response
 from rest_framework import status, viewsets
-from users.serializers import SubscribeSerializer
+from users.serializers import SubscribeSerializer, SubscriptionsSerializer
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -50,7 +50,7 @@ class UserViewSet(UserViewSet):
         user = request.user
         queryset = Follow.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(
+        serializer = SubscriptionsSerializer(
             pages, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
