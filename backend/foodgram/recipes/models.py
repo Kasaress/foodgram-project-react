@@ -117,12 +117,12 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_card'
+        related_name='shopping_cart'
         )
     recipe = models.ForeignKey(
         Recipe, 
         models.CASCADE,
-        related_name='shopping_card'
+        related_name='shopping_cart'
         )
 
     def __str__(self):
