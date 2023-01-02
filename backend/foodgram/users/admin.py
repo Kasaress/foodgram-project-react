@@ -1,15 +1,18 @@
-# from django.contrib import admin
-# from django.contrib.auth import get_user_model
+from django.contrib import admin
+from django.contrib.auth import get_user_model
 
-# User = get_user_model()
-
-
-
-# class UserAdmin(admin.ModelAdmin):  # type: ignore
-#     list_display = ('pk', 'username', 'email',)
-#     search_fields = ('email', 'username',)
-#     ordering = ('email',)
-#     # list_editable = ('role',)
+User = get_user_model()
 
 
-# admin.site.register(User, UserAdmin)
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'username', 'email',
+        'first_name',
+        'last_name',
+        'password',
+        )
+    search_fields = ('email', 'username',)
+    ordering = ('email',)
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

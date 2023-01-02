@@ -19,12 +19,18 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
     search_fields = ('name',)
+    list_filter = ('name', )
     
     
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('author', 'name', 'image', 'text', 'cooking_time')
-    search_fields = ('name', 'author',)
+    list_display = ('author', 'name', 'cooking_time', 'get_favorite')
+    search_fields = ('name', 'author', 'tags')
+    list_filter = ('author', 'name', 'tags')
     inlines = (TabularInlineRecipeTag, TabularInlineRecipeIngredient)
+    
+    def get_favorite(self, obj):
+        return obj.favorite.count()
+    get_favorite.short_description = 'Добавлен в избранное'
     
     
     
