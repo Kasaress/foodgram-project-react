@@ -1,4 +1,5 @@
 import os
+
 # from dotenv import load_dotenv
 # load_dotenv()
 
@@ -115,7 +116,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-DUPLICATE_USERNAME_MESSAGE = 'Пользователь с таким username уже зарегистрирован'
+DUPLICATE_USERNAME_MESSAGE = {'errors': 'Пользователь с таким username уже зарегистрирован'}
 NAME_SLUG_LENGTH = 200
 TAG_SLUG_PATTERN = r'^[-a-zA-Z0-9_]+$'
-TAG_SLUG_ERROR_MESSAGE = f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'
+TAG_SLUG_ERROR_MESSAGE = {'errors': f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'}
+SUBSCRIBE_ERROR_MESSAGE = {'errors': 'Вы не были подписаны на этого пользователя.'}
+ISAUTHORORADMIN_ERROR_MESSAGE = {'errors': 'Изменять и удалять рецепт может только его автор и администратор.'}
+SHOPPING_CART_ERROR_MESSAGE = {'errors': 'Этого рецепта не было в списке покупок.'}
+FAVORITE_ERROR_MESSAGE = {'errors': 'Этого рецепта не было в избранном.'}

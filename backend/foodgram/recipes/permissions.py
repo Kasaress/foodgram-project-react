@@ -1,7 +1,10 @@
+from django.conf import settings
 from rest_framework import permissions
 
+
 class IsAuthorOrAdminOrReadOnly(permissions.BasePermission):
-    message = 'Изменять и удалять рецепт может только его автор и администратор.'
+    """Ограничение доступа редактирования или удаления."""
+    message = settings.ISAUTHORORADMIN_ERROR_MESSAGE
     
     def has_permission(self, request, view):
         return (

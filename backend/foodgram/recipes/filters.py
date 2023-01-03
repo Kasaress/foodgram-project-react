@@ -1,9 +1,12 @@
 import django_filters
 from django_filters import rest_framework
-from .models import Recipe, Tag, Ingredient
 from rest_framework.filters import SearchFilter
 
+from recipes.models import Ingredient, Recipe, Tag
+
+
 class RecipesFilter(django_filters.FilterSet):
+    """Фильтр для рецептов."""
     author = rest_framework.NumberFilter(field_name='author__id')
     tags = django_filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
@@ -15,11 +18,9 @@ class RecipesFilter(django_filters.FilterSet):
     is_in_shopping_cart = django_filters.NumberFilter(
         method='filter_is_in_shopping_cart')
 
-        
     class Meta:
         model = Recipe
         fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
-        # fields = ['author', 'tags',]
         
     
     def filter_is_favorited(self, queryset, name, value):
@@ -35,6 +36,7 @@ class RecipesFilter(django_filters.FilterSet):
         
 
 class IngredientsFilter(SearchFilter):
+    """Фильтр для игредиентов с поиском по названию."""
     search_param = 'name'
 
     class Meta:

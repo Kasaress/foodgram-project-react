@@ -1,20 +1,21 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import action
-from djoser.views import UserViewSet
-from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from recipes.models import Follow
-from rest_framework.response import Response
+from djoser.views import UserViewSet
 from rest_framework import status
-from users.serializers import CustomUserSerializer
-from recipes.serializers import SubscribeSerializer, SubscriptionsSerializer
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 
+from recipes.models import Follow
+from recipes.serializers import SubscribeSerializer, SubscriptionsSerializer
+from users.serializers import CustomUserSerializer
 
 User = get_user_model()
 
 class UserViewSet(UserViewSet):
-
+    """Вьюсет пользователей."""
     def get_queryset(self):
         return User.objects.all()
 
@@ -25,13 +26,13 @@ class UserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated],
     )
     def subscribe(self, request, id):
+        """Подписка на автора и отписка от него."""
         user = request.user
         author = get_object_or_404(User, pk=id)
         data = {
             'user': user.id,
             'author': author.id,
         }
-        print(data)
         if request.method == 'POST':
             serializer = SubscribeSerializer(
                 data=data, context={'request': request}
@@ -39,11 +40,10 @@ class UserViewSet(UserViewSet):
             serializer.is_valid(raise_exception=True)
             Follow.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
         subscribe_to_del = Follow.objects.filter(
             user=request.user, author=author )
         if not subscribe_to_del:
-            return Response({'errors': 'Вы не были подписаны на этого пользователя.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(settings.SUBSCRIBE_ERROR_MESSAGE, status=status.HTTP_400_BAD_REQUEST)
         subscribe_to_del.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -51,6 +51,7 @@ class UserViewSet(UserViewSet):
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
+        """Список авторов, на которых подписан пользователь."""
         user = request.user
         queryset = Follow.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)

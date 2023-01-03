@@ -1,12 +1,14 @@
-from django.db import models
 from django.conf import settings
-from . import validators
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.db.models import UniqueConstraint
+
+from recipes import validators
 
 User = get_user_model()
 
 class Tag(models.Model):
+    """Модель тэга."""
     name = models.CharField(max_length=settings.NAME_SLUG_LENGTH )
     color = models.CharField(max_length=7, default="#E26C2D")
     slug = models.SlugField(
@@ -20,6 +22,7 @@ class Tag(models.Model):
     
     
 class Ingredient(models.Model):
+    """Модель ингредиента."""
     name = models.CharField(max_length=settings.NAME_SLUG_LENGTH)
     measurement_unit = models.CharField(max_length=settings.NAME_SLUG_LENGTH)
     
@@ -27,7 +30,8 @@ class Ingredient(models.Model):
         return self.name
     
     
-class Recipe(models.Model):    
+class Recipe(models.Model):   
+    """Модель рецепта.""" 
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -63,6 +67,7 @@ class Recipe(models.Model):
       
     
 class TagRecipe(models.Model):
+    """Модель для связи рецептов и тэгов."""
     tag = models.ForeignKey(
         Tag,
         on_delete=models.SET_NULL,
@@ -80,6 +85,7 @@ class TagRecipe(models.Model):
     
     
 class IngredientRecipe(models.Model):
+    """Модель для связи рецептов и ингредиентов."""
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.SET_NULL,
@@ -98,6 +104,7 @@ class IngredientRecipe(models.Model):
     
     
 class Favorite(models.Model):
+    """Модель избранного."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -114,6 +121,7 @@ class Favorite(models.Model):
     
     
 class ShoppingCart(models.Model):
+    """Модель списка покупок."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -130,6 +138,7 @@ class ShoppingCart(models.Model):
     
     
 class Follow(models.Model):
+    """Модель подписки."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

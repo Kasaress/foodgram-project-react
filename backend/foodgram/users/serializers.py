@@ -1,18 +1,16 @@
 
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import Follow, Recipe
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
-from rest_framework import serializers, status
+from djoser.serializers import UserCreateSerializer
+from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
-# from recipes.serializers import ShortRecipeSerializer
 
+from recipes.models import Follow
 
 User = get_user_model()
         
 class UserCreateSerializer(UserCreateSerializer):
+    """Сериализатор для создания пользователя.
+       Позволяет хранить в базе хэшированный пароль."""
     class Meta:
         model = User
         fields = (
@@ -30,6 +28,7 @@ class UserCreateSerializer(UserCreateSerializer):
     
     
 class CustomUserSerializer(serializers.ModelSerializer):
+    """Сериализатор пользователей."""
     is_subscribed = SerializerMethodField()
     class Meta:
         model = User
