@@ -39,18 +39,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
-            recipe__shopping_card__user=request.user
+            recipe__shopping_cart__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
-        shopping_list = 'Список покупокы:'
+        shopping_cart = 'Список покупок:'
         for ingredient in ingredients:
-            shopping_list += (
+            shopping_cart += (
                 f"\n{ingredient['ingredient__name']} "
                 f"({ingredient['ingredient__measurement_unit']}) - "
                 f"{ingredient['amount']}")
-        file = 'shopping_list.txt'
-        response = HttpResponse(shopping_list, content_type='text/plain')
+        file = 'shopping_cart.txt'
+        response = HttpResponse(shopping_cart, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
         return response        
     
@@ -71,12 +71,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        get_object_or_404(
-            ShoppingCart,
-            user=user.id,
-            recipe=recipe
-        ).delete()
+        recipe_to_del = ShoppingCart.objects.filter(
+            user=request.user, recipe=recipe)
+        if not recipe_to_del:
+            return Response({'errors': 'Этого рецепта не было в списке покупок.'}, status=status.HTTP_400_BAD_REQUEST)
+        recipe_to_del.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
     
     @action(detail=True, methods=['POST', 'DELETE'], permission_classes=[IsAuthenticated])
     def favorite(self, request, pk):
@@ -94,12 +95,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        get_object_or_404(
-            Favorite,
-            user=user.id,
-            recipe=recipe
-        ).delete()
+        recipe_to_del = Favorite.objects.filter(
+            user=request.user, recipe=recipe)
+        if not recipe_to_del:
+            return Response({'errors': 'Этого рецепта не было в избранном.'}, status=status.HTTP_400_BAD_REQUEST)
+        recipe_to_del.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
     
 class IngredientsViewSet(viewsets.ModelViewSet):
