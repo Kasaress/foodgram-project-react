@@ -5,7 +5,10 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.getenv('SECRET_KEY', default='tr61-8a=^d5nz=k!(4#!y_w*e$j7(1olf84%fz7^n5_@vak8)^')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    default='tr61-8a=^d5nz=k!(4#!y_w*e$j7(1olf84%fz7^n5_@vak8)^'
+)
 
 DEBUG = True
 
@@ -57,12 +60,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv(
+                'DB_ENGINE',
+                default='django.db.backends.postgresql'),
+            'NAME': os.getenv('DB_NAME', default='postgres'),
+            'USER': os.getenv('POSTGRES_USER', default='postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+            'HOST': os.getenv('DB_HOST', default='db'),
+            'PORT': os.getenv('DB_PORT', default='5432')
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -96,14 +113,14 @@ DJOSER = {
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
         'user_list': ['rest_framework.permissions.AllowAny'],
-    },    
+    },
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
         'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.CustomUserSerializer',
     },
 }
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -116,11 +133,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-DUPLICATE_USERNAME_MESSAGE = {'errors': 'Пользователь с таким username уже зарегистрирован'}
+DUPLICATE_USERNAME_MESSAGE = {
+    'errors': 'Пользователь с таким username уже зарегистрирован'
+}
 NAME_SLUG_LENGTH = 200
 TAG_SLUG_PATTERN = r'^[-a-zA-Z0-9_]+$'
-TAG_SLUG_ERROR_MESSAGE = {'errors': f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'}
-SUBSCRIBE_ERROR_MESSAGE = {'errors': 'Вы не были подписаны на этого пользователя.'}
-ISAUTHORORADMIN_ERROR_MESSAGE = {'errors': 'Изменять и удалять рецепт может только его автор и администратор.'}
-SHOPPING_CART_ERROR_MESSAGE = {'errors': 'Этого рецепта не было в списке покупок.'}
+TAG_SLUG_ERROR_MESSAGE = {
+    'errors': f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'
+}
+SUBSCRIBE_ERROR_MESSAGE = {
+    'errors': 'Вы не были подписаны на этого пользователя.'
+}
+ISAUTHORORADMIN_ERROR_MESSAGE = {
+    'errors': 'Изменять и удалять рецепт может его автор и администратор.'
+}
+SHOPPING_CART_ERROR_MESSAGE = {
+    'errors': 'Этого рецепта не было в списке покупок.'
+}
 FAVORITE_ERROR_MESSAGE = {'errors': 'Этого рецепта не было в избранном.'}

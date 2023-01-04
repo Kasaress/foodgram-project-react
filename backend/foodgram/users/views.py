@@ -14,11 +14,11 @@ from users.serializers import CustomUserSerializer
 
 User = get_user_model()
 
+
 class UserViewSet(UserViewSet):
     """Вьюсет пользователей."""
     def get_queryset(self):
         return User.objects.all()
-
 
     @action(
         detail=True,
@@ -41,13 +41,14 @@ class UserViewSet(UserViewSet):
             Follow.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         subscribe_to_del = Follow.objects.filter(
-            user=request.user, author=author )
+            user=request.user, author=author)
         if not subscribe_to_del:
-            return Response(settings.SUBSCRIBE_ERROR_MESSAGE, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                settings.SUBSCRIBE_ERROR_MESSAGE,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         subscribe_to_del.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
@@ -59,9 +60,12 @@ class UserViewSet(UserViewSet):
             pages, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
-    
-    
-    @action(methods=('GET',), detail=False, permission_classes=[IsAuthenticated])
+
+    @action(
+        methods=['GET'],
+        detail=False,
+        permission_classes=[IsAuthenticated]
+    )
     def me(self, request):
         if request.user.is_anonymous:
             return Response(status=HTTP_401_UNAUTHORIZED)
