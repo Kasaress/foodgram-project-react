@@ -115,11 +115,11 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
     'SERIALIZERS': {
-        'user_create': 'users.serializers.UserCreateSerializer',
         'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.CustomUserSerializer',
     },
 }
+AUTH_USER_MODEL = 'users.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 LANGUAGE_CODE = 'ru-ru'
 
@@ -138,6 +138,8 @@ DUPLICATE_USERNAME_MESSAGE = {
 }
 NAME_SLUG_LENGTH = 200
 COLOR_FIELD_LENGTH = 7
+USER_STRING_FIELD_LENGTH = 150
+USER_EMAIL_FIELD_LENGTH = 254
 TAG_SLUG_PATTERN = r'^[-a-zA-Z0-9_]+$'
 TAG_SLUG_ERROR_MESSAGE = {
     'errors': f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'

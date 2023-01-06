@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
+from users.models import CustomUser
+# from django.contrib.auth import get_user_model
 
-User = get_user_model()
+# User = get_user_model()
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -17,7 +18,7 @@ class UserAdmin(admin.ModelAdmin):
         'password',
     )
     search_fields = ('email', 'username',)
-    ordering = ('email',)
+    ordering = ('username',)
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
@@ -28,5 +29,5 @@ class UserAdmin(admin.ModelAdmin):
     get_followers_count.short_description = 'Подписчики'
 
 
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+# admin.site.unregister(CustomUser)
+admin.site.register(CustomUser, UserAdmin)

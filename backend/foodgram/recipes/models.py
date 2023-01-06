@@ -159,50 +159,42 @@ class IngredientRecipe(models.Model):
         return f'Ингредиент "{self.ingredient}" в рецепте {self.recipe}'
 
 
-class Favorite(models.Model):
-    """Модель избранного."""
+class FavoriteShoppingCartBaseModel(models.Model):
+    """Родительская модель для избранного и списка покупок."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favorite'
         )
     recipe = models.ForeignKey(
         Recipe,
         models.CASCADE,
-        related_name='favorite'
         )
 
     class Meta:
+        abstract = True
         constraints = [
             UniqueConstraint(
                 fields=('user', 'recipe'),
                 name='unique_user_recipe'
             )
         ]
-        verbose_name = 'Избранное'
 
     def __str__(self):
-        return f'У пользователя {self.user} в избранном {self.recipe}'
+        return f'Пользователь {self.user}, рецепт {self.recipe}'
 
 
-class ShoppingCart(models.Model):
+class Favorite(FavoriteShoppingCartBaseModel):
+    """Модель избранного."""
+    class Meta(FavoriteShoppingCartBaseModel.Meta):
+        verbose_name = 'Избранное'
+        default_related_name = 'favorite'
+
+
+class ShoppingCart(FavoriteShoppingCartBaseModel):
     """Модель списка покупок."""
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='shopping_cart'
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        models.CASCADE,
-        related_name='shopping_cart'
-    )
-
     class Meta:
         verbose_name = 'Список покупок'
-
-    def __str__(self):
-        return f'У пользователя {self.user} в списке покупок {self.recipe}'
+        default_related_name = 'shopping_cart'
 
 
 class Follow(models.Model):
