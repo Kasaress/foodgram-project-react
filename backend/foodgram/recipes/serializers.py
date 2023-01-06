@@ -28,7 +28,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор ингредиентов в рецептах."""
-    id = serializers.IntegerField(source='ingredient.id')
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -64,10 +64,12 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         if request:
             current_user = request.user
-        return arg0.objects.filter(
-            user=current_user.id,
-            recipe=obj.id
-        ).exists()
+            return arg0.objects.filter(
+                user=current_user.id,
+                recipe=obj.id
+            ).exists()
+        else:
+            return None
 
     def get_is_in_shopping_cart(self, obj):
         """Возвращает присутствие рецепта в списке покупок."""
@@ -86,8 +88,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     )
     ingredients = IngredientRecipeSerializer(
         many=True,
-        source='ingredientrecipe_set',
-        # required=True
     )
     image = Base64ImageField(max_length=None)
     author = CustomUserSerializer(read_only=True)
@@ -102,21 +102,25 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def set_recipe_ingredient(self, ingredients, recipe):
         """Добавляет ингредиенты в рецепт."""
-        for ingredient in ingredients:
-            ingredient_id = ingredient.popitem(last=False)[1]['id']
-            ingredient_amount = ingredient.popitem(last=False)[1]
-            ingredient_to_add = get_object_or_404(Ingredient, pk=ingredient_id)
+        ingredient_list = []
+        for ingredient_data in ingredients:
+            ingredient = ingredient_data['id']
+            ingredient_amount = ingredient_data['amount']
+            ingredient_to_add = get_object_or_404(Ingredient, pk=ingredient.id)
             if ingredient_to_add:
-                IngredientRecipe.objects.create(
-                    ingredient=ingredient_to_add,
-                    recipe=recipe,
-                    amount=ingredient_amount
+                ingredient_list.append(
+                    IngredientRecipe(
+                        ingredient=ingredient_to_add,
+                        recipe=recipe,
+                        amount=ingredient_amount
+                    )
                 )
+        IngredientRecipe.objects.bulk_create(ingredient_list)
 
     def create(self, validated_data):
         """Сохраняет рецепт в БД и возвращает его."""
         tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredientrecipe_set')
+        ingredients = validated_data.pop('ingredients')
         request = self.context.get('request')
         recipe = Recipe.objects.create(author=request.user, **validated_data)
         recipe.tags.set(tags)
@@ -128,7 +132,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         IngredientRecipe.objects.filter(recipe=instance).delete()
         tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredientrecipe_set')
+        ingredients = validated_data.pop('ingredients')
         instance.tags.set(tags)
         self.set_recipe_ingredient(ingredients, instance)
         return super().update(instance, validated_data)

@@ -6,11 +6,15 @@ from recipes.models import Ingredient, Recipe, Tag
 class TabularInlineRecipeTag(admin.TabularInline):
     """Класс для красивого отображения тэгов в рецепте."""
     model = Recipe.tags.through
+    extra = 1
+    min_num = 1
 
 
 class TabularInlineRecipeIngredient(admin.TabularInline):
     """Класс для красивого отображения ингредиентов в рецепте."""
     model = Recipe.ingredients.through
+    extra = 1
+    min_num = 1
 
 
 class TagAdmin(admin.ModelAdmin):
