@@ -39,9 +39,6 @@ class Command(BaseCommand):
                             name=row[0],
                             slug=row[1]
                         )
-                    except Exception as e:
-                        print(f'Exception {e}')
-                    finally:
                         if new_tag[-1]:
                             print(
                                 f'Создан новый тэг: {new_tag[0]}'
@@ -50,6 +47,8 @@ class Command(BaseCommand):
                             print(
                                 f'Тэг {new_tag[0]} создан ранее'
                             )
+                    except Exception as e:
+                        print(f'Exception {e}')
         if base == Ingredient:
             with open(args[1], 'r', encoding="utf-8") as csvfile:
                 try:
@@ -62,9 +61,6 @@ class Command(BaseCommand):
                             name=row[0],
                             measurement_unit=row[1]
                         )
-                    except Exception as e:
-                        print(f'Exception {e}')
-                    finally:
                         if new_ingedient[-1]:
                             print(
                                 f'Создан новый ингредиент: {new_ingedient[0]}'
@@ -73,6 +69,8 @@ class Command(BaseCommand):
                             print(
                                 f'Ингредиент {new_ingedient[0]} создан ранее'
                             )
+                    except Exception as e:
+                        print(f'Exception {e}')
 
     def add_arguments(self, parser):
         parser.add_argument(

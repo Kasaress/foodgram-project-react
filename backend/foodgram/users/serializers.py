@@ -1,11 +1,9 @@
 
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
 
 from recipes.models import Follow
-
-User = get_user_model()
+from users.models import CustomUser as User
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

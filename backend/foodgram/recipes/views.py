@@ -3,6 +3,9 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
@@ -40,15 +43,53 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def get_shopping_cart(ingredients):
-        shopping_cart = 'Список покупок:'
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename="shopping_cart.pdf"')
+        shopping_cart = canvas.Canvas(response)
+        pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+        shopping_cart.setFont('FreeSans', settings.BIG_FONT)
+        shopping_cart.drawString(
+            settings.PADDING_START_TEXT,
+            settings.PADDING_BOTTOM_FIRST_ROW,
+            "Список покупок"
+        )
+        page_count = 1
+        step = settings.PADDING_BOTTOM_ROWS
+        shopping_cart.setFont('FreeSans', settings.SMALL_FONT)
+        shopping_cart.drawString(
+            settings.PADDING_START_NUMBER,
+            settings.PADDING_BOTTOM_FIRST_ROW,
+            str(page_count)
+        )
         for ingredient in ingredients:
-            shopping_cart += (
-                f"\n{ingredient['ingredient__name']} "
+            shopping_cart.drawString(
+                settings.PADDING_START_TEXT,
+                step,
+                f"{ingredient['ingredient__name']} "
                 f"({ingredient['ingredient__measurement_unit']}) - "
-                f"{ingredient['amount']}")
-        file = 'shopping_cart.txt'
-        response = HttpResponse(shopping_cart, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
+                f"{ingredient['amount']}"
+            )
+            if step <= settings.SIZE_BETWEEN_ROW:
+                page_count += 1
+                step = settings.PADDING_BOTTOM_ROWS
+                shopping_cart.showPage()
+                shopping_cart.setFont('FreeSans', settings.BIG_FONT)
+                shopping_cart.drawString(
+                    settings.PADDING_START_TEXT,
+                    settings.PADDING_BOTTOM_FIRST_ROW,
+                    "Список покупок"
+                )
+                shopping_cart.setFont('FreeSans', settings.SMALL_FONT)
+                shopping_cart.drawString(
+                    settings.PADDING_START_NUMBER,
+                    settings.PADDING_BOTTOM_FIRST_ROW,
+                    str(page_count)
+                )
+            else:
+                step -= settings.SIZE_BETWEEN_ROW
+        shopping_cart.showPage()
+        shopping_cart.save()
         return response
 
     @action(
