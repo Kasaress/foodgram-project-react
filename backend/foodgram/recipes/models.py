@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.core.validators import MinValueValidator
 
 from recipes import validators
 
@@ -15,7 +16,7 @@ class Tag(models.Model):
         verbose_name='Тэг'
     )
     color = models.CharField(
-        max_length=7,
+        max_length=settings.COLOR_FIELD_LENGTH,
         default="#E26C2D",
         verbose_name='Цвет'
     )
@@ -46,6 +47,12 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('name', 'measurement_unit'),
+                name='unique_ingredient'
+            ),
+        ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -72,7 +79,12 @@ class Recipe(models.Model):
         verbose_name='Картинка'
     )
     text = models.TextField(verbose_name='Описание')
-    cooking_time = models.IntegerField(verbose_name='Время приготовления')
+    cooking_time = models.PositiveSmallIntegerField(
+        verbose_name='Время приготовления',
+        validators=[MinValueValidator(
+            1, message='Время приготовления не может быть меньше 1 минуты.'
+        )]
+    )
     tags = models.ManyToManyField(
         Tag,
         through='TagRecipe',
@@ -133,7 +145,11 @@ class IngredientRecipe(models.Model):
         blank=True,
         null=True
     )
-    amount = models.IntegerField()
+    amount = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(
+            1, message='Количество не может быть нулевым.'
+        )]
+    )
 
     class Meta:
         verbose_name = 'Связь ингредиента с рецептом'
@@ -157,6 +173,12 @@ class Favorite(models.Model):
         )
 
     class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unique_user_recipe'
+            )
+        ]
         verbose_name = 'Избранное'
 
     def __str__(self):

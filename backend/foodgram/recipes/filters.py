@@ -1,22 +1,23 @@
-import django_filters
-from django_filters import rest_framework
+from django_filters.rest_framework import (FilterSet,
+                                           ModelMultipleChoiceFilter,
+                                           NumberFilter)
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.models import Recipe, Tag
 
 
-class RecipesFilter(django_filters.FilterSet):
+class RecipesFilter(FilterSet):
     """Фильтр для рецептов."""
-    author = rest_framework.NumberFilter(field_name='author__id')
-    tags = django_filters.ModelMultipleChoiceFilter(
+    author = NumberFilter(field_name='author__id')
+    tags = ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
         queryset=Tag.objects.all()
     )
-    is_favorited = django_filters.NumberFilter(
+    is_favorited = NumberFilter(
         method='filter_is_favorited'
     )
-    is_in_shopping_cart = django_filters.NumberFilter(
+    is_in_shopping_cart = NumberFilter(
         method='filter_is_in_shopping_cart'
     )
 
@@ -38,7 +39,3 @@ class RecipesFilter(django_filters.FilterSet):
 class IngredientsFilter(SearchFilter):
     """Фильтр для игредиентов с поиском по названию."""
     search_param = 'name'
-
-    class Meta:
-        model = Ingredient
-        fields = ('name',)

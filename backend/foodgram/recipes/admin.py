@@ -28,7 +28,13 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class RecipeAdmin(admin.ModelAdmin):
     """Рецепты с поиском и фильтрами по названию, автору и тэгам."""
-    list_display = ('name', 'author', 'cooking_time', 'get_favorite')
+    list_display = (
+        'name',
+        'author',
+        'cooking_time',
+        'get_favorite',
+        'get_ingredients'
+    )
     search_fields = ('name', 'author', 'tags')
     list_filter = ('author', 'name', 'tags')
     inlines = (TabularInlineRecipeTag, TabularInlineRecipeIngredient)
@@ -36,6 +42,12 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_favorite(self, obj):
         return obj.favorite.count()
     get_favorite.short_description = 'В избранном'
+
+    def get_ingredients(self, obj):
+        return ', '.join(
+            f'{ingredient.name}' for ingredient in obj.ingredients.all()
+        )
+    get_ingredients.short_description = 'Ингредиенты'
 
 
 admin.site.register(Tag, TagAdmin)

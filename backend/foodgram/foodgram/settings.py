@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv(
     default='tr61-8a=^d5nz=k!(4#!y_w*e$j7(1olf84%fz7^n5_@vak8)^'
 )
 
-DEBUG = True
+DEBUG = os.getenv('IS_DEBUG', default=True)
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
 
@@ -60,7 +60,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-if DEBUG:
+if os.getenv('IS_DEBUG', default=True):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -137,6 +137,7 @@ DUPLICATE_USERNAME_MESSAGE = {
     'errors': 'Пользователь с таким username уже зарегистрирован'
 }
 NAME_SLUG_LENGTH = 200
+COLOR_FIELD_LENGTH = 7
 TAG_SLUG_PATTERN = r'^[-a-zA-Z0-9_]+$'
 TAG_SLUG_ERROR_MESSAGE = {
     'errors': f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'
@@ -151,3 +152,6 @@ SHOPPING_CART_ERROR_MESSAGE = {
     'errors': 'Этого рецепта не было в списке покупок.'
 }
 FAVORITE_ERROR_MESSAGE = {'errors': 'Этого рецепта не было в избранном.'}
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

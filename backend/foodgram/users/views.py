@@ -17,8 +17,7 @@ User = get_user_model()
 
 class UserViewSet(UserViewSet):
     """Вьюсет пользователей."""
-    def get_queryset(self):
-        return User.objects.all()
+    queryset = User.objects.all()
 
     @action(
         detail=True,
@@ -38,16 +37,11 @@ class UserViewSet(UserViewSet):
                 data=data, context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
-            Follow.objects.create(user=user, author=author)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        subscribe_to_del = Follow.objects.filter(
-            user=request.user, author=author)
-        if not subscribe_to_del:
-            return Response(
-                settings.SUBSCRIBE_ERROR_MESSAGE,
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        subscribe_to_del.delete()
+        get_object_or_404(
+            Follow.objects.filter(user=request.user, author=author)
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
