@@ -1,10 +1,9 @@
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import serializers, status
-from rest_framework.exceptions import ValidationError
-
 from recipes.models import (Favorite, Follow, Ingredient, IngredientRecipe,
                             Recipe, ShoppingCart, Tag)
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 from users.models import CustomUser as User
 from users.serializers import CustomUserSerializer
 
@@ -41,10 +40,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения рецептов."""
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True)
-    ingredients = IngredientRecipeSerializer(
-        source='ingredientrecipe_set',
-        many=True
-    )
+    ingredients = IngredientSerializer(many=True)
     image = Base64ImageField(max_length=None)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -100,19 +96,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def set_recipe_ingredient(self, ingredients, recipe):
         """Добавляет ингредиенты в рецепт."""
-        ingredient_list = []
-        for ingredient_data in ingredients:
-            ingredient = ingredient_data['id']
-            ingredient_amount = ingredient_data['amount']
-            ingredient_to_add = get_object_or_404(Ingredient, pk=ingredient.id)
-            if ingredient_to_add:
-                ingredient_list.append(
-                    IngredientRecipe(
-                        ingredient=ingredient_to_add,
-                        recipe=recipe,
-                        amount=ingredient_amount
-                    )
-                )
+        ingredient_list = [
+            IngredientRecipe(
+                ingredient=get_object_or_404(
+                    Ingredient, pk=ingredient['id'].id
+                ),
+                recipe=recipe,
+                amount=ingredient['amount'],
+             )
+            for ingredient in ingredients
+        ]
         IngredientRecipe.objects.bulk_create(ingredient_list)
 
     def create(self, validated_data):

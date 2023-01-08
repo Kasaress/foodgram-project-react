@@ -1,13 +1,12 @@
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from recipes.models import Follow
+from recipes.serializers import SubscribeSerializer, SubscriptionsSerializer
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED
-
-from recipes.models import Follow
-from recipes.serializers import SubscribeSerializer, SubscriptionsSerializer
 from users.models import CustomUser as User
 from users.serializers import CustomUserSerializer
 
@@ -37,7 +36,7 @@ class UserViewSet(UserViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         get_object_or_404(
-            Follow.objects.filter(user=request.user, author=author)
+            Follow, user=request.user, author=author
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

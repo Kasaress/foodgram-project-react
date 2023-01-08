@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
-
 from recipes import validators
 from users.models import CustomUser as User
 
@@ -53,6 +52,7 @@ class Ingredient(models.Model):
         ]
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -135,13 +135,15 @@ class IngredientRecipe(models.Model):
         Ingredient,
         on_delete=models.SET_NULL,
         blank=True,
-        null=True
+        null=True,
+        related_name='ingrs_recipes'
     )
     recipe = models.ForeignKey(
         Recipe,
         models.SET_NULL,
         blank=True,
-        null=True
+        null=True,
+        related_name='ingrs_recipes'
     )
     amount = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(
@@ -173,7 +175,7 @@ class FavoriteShoppingCartBaseModel(models.Model):
         constraints = [
             UniqueConstraint(
                 fields=('user', 'recipe'),
-                name='unique_user_recipe'
+                name='%(class)s_unique_user_recipe'
             )
         ]
 
@@ -190,7 +192,7 @@ class Favorite(FavoriteShoppingCartBaseModel):
 
 class ShoppingCart(FavoriteShoppingCartBaseModel):
     """Модель списка покупок."""
-    class Meta:
+    class Meta(FavoriteShoppingCartBaseModel.Meta):
         verbose_name = 'Список покупок'
         default_related_name = 'shopping_cart'
 

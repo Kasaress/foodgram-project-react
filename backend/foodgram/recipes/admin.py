@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.contrib.auth.models import Group
 from recipes.models import Ingredient, Recipe, Tag
 
 
@@ -25,7 +25,7 @@ class TagAdmin(admin.ModelAdmin):
 
 class IngredientAdmin(admin.ModelAdmin):
     """Ингредиенты с поиском и фильтром по названию."""
-    list_display = ('name', 'measurement_unit')
+    list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name', )
 
@@ -43,17 +43,21 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'name', 'tags')
     inlines = (TabularInlineRecipeTag, TabularInlineRecipeIngredient)
 
+    @admin.display(description='В избранном')
     def get_favorite(self, obj):
         return obj.favorite.count()
-    get_favorite.short_description = 'В избранном'
 
+    @admin.display(description='Ингредиенты')
     def get_ingredients(self, obj):
         return ', '.join(
-            f'{ingredient.name}' for ingredient in obj.ingredients.all()
+            f'{ingr.name} - '
+            f'{obj.ingrs_recipes.filter(ingredient=ingr.id).first().amount} '
+            f'{ingr.measurement_unit} '
+            for ingr in obj.ingredients.all()
         )
-    get_ingredients.short_description = 'Ингредиенты'
 
 
+admin.site.unregister(Group)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Recipe, RecipeAdmin)

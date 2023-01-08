@@ -1,8 +1,7 @@
 
+from recipes.models import Follow
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
-
-from recipes.models import Follow
 from users.models import CustomUser as User
 
 

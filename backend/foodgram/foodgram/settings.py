@@ -4,6 +4,7 @@ import os
 # load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_ROOT = os.path.join(BASE_DIR, 'data')
 
 SECRET_KEY = os.getenv(
     'SECRET_KEY',
@@ -60,7 +61,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-if os.getenv('IS_DEBUG', default=True):
+if os.getenv('IS_SQLITE', default=True):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
