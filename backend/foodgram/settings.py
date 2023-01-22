@@ -61,7 +61,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-if os.getenv('IS_SQLITE', default=False):
+if os.getenv('IS_SQLITE', default=True):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
