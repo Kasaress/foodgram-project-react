@@ -67,6 +67,7 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         key: ${{ secrets.SSH_KEY }}
         script: |
+          cd infra
           sudo docker-compose down
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
