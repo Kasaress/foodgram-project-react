@@ -62,8 +62,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                 user=current_user.id,
                 recipe=obj.id
             ).exists()
-        else:
-            return None
+        return None
 
     def get_is_in_shopping_cart(self, obj):
         """Возвращает присутствие рецепта в списке покупок."""
