@@ -2,7 +2,7 @@ version: '3.8'
 services:
 
   frontend:
-    image: kasares/foodgram_frontend
+    image: bujhvh/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
@@ -17,7 +17,7 @@ services:
       - .env
 
   backend:
-    image: kasares/foodgram_backend
+    image: bujhvh/foodgram_backend
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
