@@ -23,11 +23,10 @@ class Command(BaseCommand):
                                 name=data['name'],
                                 slug=data['slug']
                             )
-        elif model == Ingredient:
-            return model.objects.get_or_create(
-                                name=data['name'],
-                                measurement_unit=data['measurement_unit']
-                            )
+        return model.objects.get_or_create(
+                            name=data['name'],
+                            measurement_unit=data['measurement_unit']
+                        )
 
     def handle(self, *args, **options):
         for base_name, base in self.BASES.items():
