@@ -148,7 +148,7 @@ TAG_SLUG_ERROR_MESSAGE = {
 # SUBSCRIBE_ERROR_MESSAGE = {
 #     'errors': 'Вы не были подписаны на этого пользователя.'
 # }
-ISAUTHORORADMIN_ERROR_MESSAGE = {
+IS_AUTHOR_OR_ADMIN_ERROR_MESSAGE = {
     'errors': 'Изменять и удалять рецепт может его автор и администратор.'
 }
 # SHOPPING_CART_ERROR_MESSAGE = {
