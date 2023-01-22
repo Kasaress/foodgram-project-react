@@ -28,7 +28,6 @@ services:
     restart: always
     container_name: foodgram_backend
 
-
   nginx:
     image: nginx:1.19.3
     ports:
