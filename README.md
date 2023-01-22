@@ -1,5 +1,5 @@
 а тут будет бейджик
-![example workflow](https://github.com/kasaress/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+![example workflow](https://github.com/kasaress/foodgram-project-react/actions/workflows/foodgram_workflow.yaml/badge.svg)
 
 ## Описание проекта
 Приложение для публикации, поиска и выбора кулинарных рецептов. Каждый может авторизоваться, выложить свои рецепты, подписаться на других пользователей, добавлять 
