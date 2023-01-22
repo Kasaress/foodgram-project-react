@@ -1,22 +1,27 @@
-version: '3.8'
+version: '3.3'
 services:
+  my-sonar:
+      image: sonarqube:7.1
+      platform: linux/amd64
+      ports:
+        - 9001:9000
 
   frontend:
-    image: bujhvh/foodgram_frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
-    depends_on:
-      - db
-    container_name: foodgram_frontend
 
   db:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - .env
+      - ./.env
 
   backend:
+    platform: linux/x86_64
     image: bujhvh/foodgram_backend
     volumes:
       - static_value:/app/static/
@@ -25,8 +30,6 @@ services:
       - db
     env_file:
       - .env
-    restart: always
-    container_name: foodgram_backend
 
   nginx:
     image: nginx:1.19.3
@@ -40,7 +43,6 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
-    container_name: foodgram_nginx
 
 volumes:
   postgres_data:
