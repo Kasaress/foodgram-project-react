@@ -151,19 +151,14 @@ TAG_SLUG_PATTERN = r'^[-a-zA-Z0-9_]+$'
 TAG_SLUG_ERROR_MESSAGE = {
     'errors': f'Адрес тэга не соответствует шаблону: {TAG_SLUG_PATTERN}'
 }
-# SUBSCRIBE_ERROR_MESSAGE = {
-#     'errors': 'Вы не были подписаны на этого пользователя.'
-# }
+
 IS_AUTHOR_OR_ADMIN_ERROR_MESSAGE = {
     'errors': 'Изменять и удалять рецепт может его автор и администратор.'
 }
-# SHOPPING_CART_ERROR_MESSAGE = {
-#     'errors': 'Этого рецепта не было в списке покупок.'
-# }
-# FAVORITE_ERROR_MESSAGE = {'errors': 'Этого рецепта не было в избранном.'}
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 BIG_FONT = 20
 SMALL_FONT = 15
 SIZE_BETWEEN_ROW = 40
