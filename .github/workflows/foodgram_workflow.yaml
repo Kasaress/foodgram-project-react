@@ -24,7 +24,7 @@ jobs:
     
     - name: Test with flake8
       run: |
-        python -m flake8
+        python -m flake8 --exclude ^.*\b(migrations)\b.*$
 
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub

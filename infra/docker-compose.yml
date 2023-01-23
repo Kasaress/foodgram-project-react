@@ -1,10 +1,10 @@
 version: '3.3'
 services:
-  my-sonar:
-      image: sonarqube:7.1
-      platform: linux/amd64
-      ports:
-        - 9001:9000
+  # my-sonar:
+  #     image: sonarqube:7.1
+  #     platform: linux/amd64
+  #     ports:
+  #       - 9001:9000
 
   frontend:
     build:
