@@ -1,17 +1,5 @@
 version: '3.3'
 services:
-  # my-sonar:
-  #     image: sonarqube:7.1
-  #     platform: linux/amd64
-  #     ports:
-  #       - 9001:9000
-
-  # frontend:
-  #   build:
-  #     context: ../frontend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ../frontend/:/app/result_build/
 
   db:
     image: postgres:13.0-alpine
@@ -21,7 +9,6 @@ services:
       - .env
 
   backend:
-    # platform: linux/x86_64
     image: bujhvh/foodgram_backend
     volumes:
       - static_value:/app/static/
@@ -30,7 +17,7 @@ services:
       - db
     env_file:
       - .env
-    restart: always
+    # restart: always
 
   frontend:
     image: bujhvh/foodgram_frontend
