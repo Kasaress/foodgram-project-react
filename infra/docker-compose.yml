@@ -6,22 +6,22 @@ services:
   #     ports:
   #       - 9001:9000
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ../frontend/:/app/result_build/
+  # frontend:
+  #   build:
+  #     context: ../frontend
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ../frontend/:/app/result_build/
 
   db:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
 
   backend:
-    platform: linux/x86_64
+    # platform: linux/x86_64
     image: bujhvh/foodgram_backend
     volumes:
       - static_value:/app/static/
@@ -30,6 +30,14 @@ services:
       - db
     env_file:
       - .env
+    restart: always
+
+  frontend:
+    image: bujhvh/foodgram_frontend
+    volumes:
+      - ../frontend/:/app/result_build/
+    depends_on:
+      - db
 
   nginx:
     image: nginx:1.19.3
