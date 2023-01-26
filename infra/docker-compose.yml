@@ -1,5 +1,11 @@
-version: '3.3'
+version: '3.8'
 services:
+  # my-sonar:
+  #     image: sonarqube:7.1
+  #     platform: linux/amd64
+  #     ports:
+  #       - 9001:9000
+
 
   db:
     image: postgres:13.0-alpine
@@ -9,6 +15,7 @@ services:
       - .env
 
   backend:
+    # platform: linux/x86_64
     image: bujhvh/foodgram_backend
     volumes:
       - static_value:/app/static/
@@ -17,9 +24,10 @@ services:
       - db
     env_file:
       - .env
-    # restart: always
+    restart: always
 
   frontend:
+    # platform: linux/x86_64
     image: bujhvh/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
@@ -27,6 +35,7 @@ services:
       - db
 
   nginx:
+    # platform: linux/x86_64
     image: nginx:1.19.3
     ports:
       - "80:80"
