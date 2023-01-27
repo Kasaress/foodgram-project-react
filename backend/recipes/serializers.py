@@ -93,7 +93,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'text', 'cooking_time'
         )
 
-    def set_recipe_ingredient(self, ingredients, recipe):
+    @staticmethod
+    def set_recipe_ingredient(ingredients, recipe):
         """Добавляет ингредиенты в рецепт."""
         ingredient_list = [
             IngredientRecipe(
