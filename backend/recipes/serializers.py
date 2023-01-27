@@ -98,10 +98,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredient_list = [
             IngredientRecipe(
                 ingredient=get_object_or_404(
-                    Ingredient, pk=ingredient['id'].id
+                    Ingredient, pk=ingredient.get('id').id
                 ),
                 recipe=recipe,
-                amount=ingredient['amount'],
+                amount=ingredient.get('amount'),
              )
             for ingredient in ingredients
         ]
