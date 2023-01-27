@@ -17,14 +17,14 @@ class Command(BaseCommand):
         'tags': f'{settings.DATA_ROOT}/tags.csv',
     }
 
-    def get_or_create_object(self, model, data):
+    def _get_or_create_object(self, model, data):
         if model == Tag:
             return model.objects.get_or_create(
-                                name=data['name'],
+                                name=data['name'].lower(),
                                 slug=data['slug']
                             )
         return model.objects.get_or_create(
-                            name=data['name'],
+                            name=data['name'].lower(),
                             measurement_unit=data['measurement_unit']
                         )
 
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                     sys.exit(f'CSV-file read exception {e}')
                 for row in reader:
                     try:
-                        new_obj, status = self.get_or_create_object(base, row)
+                        new_obj, status = self._get_or_create_object(base, row)
                         if status:
                             print(
                                 f'Создан новый объект: "{new_obj}"'
