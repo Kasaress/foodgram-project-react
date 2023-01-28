@@ -108,7 +108,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 amount=ingredient.get('amount'),
              )
             for ingredient in ingredients
-        ]
+        ].sort(key=(lambda item: item.ingredient.name), reverse=True)
         IngredientRecipe.objects.bulk_create(ingredient_list)
 
     def create(self, validated_data):
@@ -216,7 +216,10 @@ class SubscriptionsSerializer(CustomUserSerializer):
         )
 
     def get_recipes(self, obj):
+        limit = self.context.get('request').query_params.get('recipes_limit')
         queryset = obj.author.recipes.all()
+        if limit:
+            queryset = queryset[: int(limit)]
         return ShortRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
