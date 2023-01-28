@@ -40,7 +40,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения рецептов."""
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True)
-    ingredients = IngredientSerializer(many=True)
+    ingredients = IngredientRecipeSerializer(
+        many=True,
+        source='ingrs_recipes'
+    )
     image = Base64ImageField(max_length=None)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
